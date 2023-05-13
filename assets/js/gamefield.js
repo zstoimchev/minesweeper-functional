@@ -161,14 +161,19 @@ function printBombNumberImg(bombCount, tileID) {
 // this was idea from chatGPT
 function flagTile(event, id) {
     event.preventDefault(); // Prevent the default context menu from appearing
-
+    
     var element = event.target;
     // Add your custom right-click logic here
     console.log("Right-clicked on element with ID: " + element.id);
-
+    
     // ...
     var element = document.getElementById(id);
     var image = element.querySelector('img');
-
+    
     image.src = 'assets/img/SVGs/flag.svg';
 }
+
+// ===================================================================================================================
+
+
+// I NEED RECURSIVE FUNCTION TO REVEAL EMPTY TILES/
