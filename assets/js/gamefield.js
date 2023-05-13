@@ -35,9 +35,7 @@ function revealTile(event, id) {
     var element = document.getElementById(id);
     var image = element.querySelector('img');
 
-    image.src = 'assets/img/SVGs/1s.svg';
-
-    checkMines(id);
+    // image.src = 'assets/img/SVGs/1s.svg';
 
     if (element.classList.contains('bomb')) {
         console.log('Clicked tile has a bomb!');
@@ -49,7 +47,11 @@ function revealTile(event, id) {
                 document.getElementById(IDD).removeAttribute("onclick");
                 document.getElementById(IDD).removeAttribute('oncontextmenu');
             }
+        // window.alert("You lost the game. GAME OVER!");
+        return;
     }
+
+    checkMines(id);
 
     if (!element.classList.contains('bomb')) {
         floodFill(id);
@@ -152,6 +154,7 @@ function checkMines(id) {
         if (document.getElementById(idAsInt - 1).classList.contains("bomb"))
             bombCount++;
     }
+
     printBombNumberImg(bombCount, idAsInt);
 }
 
@@ -176,10 +179,12 @@ function flagTile(event, id) {
 
     if (element.classList.contains("flagged")) {
         element.classList.remove("flagged");
+        document.getElementById(id).setAttribute('onclick', 'revealTile(event, ' + id + ')');
         image.src = 'assets/img/SVGs/unoppened.svg'
     }
     else {
         element.classList.add('flagged');
+        document.getElementById(id).removeAttribute("onclick");
         image.src = 'assets/img/SVGs/flag.svg';
     }
 }
@@ -187,35 +192,35 @@ function flagTile(event, id) {
 // ===================================================================================================================
 
 function floodFillTile(id) {
-    var element = document.getElementById(id);
-    var image = element.querySelector('img');
-
-    if (element.classList.contains('flagged')) {
-        return; // Skip if the tile is flagged
+    const element = document.getElementById(id);
+  
+    if (!element || element.classList.contains('bomb') || element.classList.contains('revealed')) {
+      return; // Stop recursion if the tile is a bomb, already revealed, or not found
     }
-
-    if (element.classList.contains('revealed')) {
-        return; // Skip if the tile is already revealed
+  
+    element.classList.add('revealed'); // Mark the tile as revealed
+  
+    const row = Math.floor(id / 10); // Extract row number from id
+    const col = id % 10; // Extract column number from id
+  
+    // Define the eight possible directions of adjacent tiles
+    const directions = [
+      { row: -1, col: -1 }, { row: -1, col: 0 }, { row: -1, col: 1 },
+      { row: 0, col: -1 }, /* Current tile */ { row: 0, col: 1 },
+      { row: 1, col: -1 }, { row: 1, col: 0 }, { row: 1, col: 1 }
+    ];
+  
+    for (const direction of directions) {
+      const newRow = row + direction.row;
+      const newCol = col + direction.col;
+      const newId = newRow * 10 + newCol;
+  
+      floodFillTile(newId); // Recursively call floodFillTile on adjacent tiles
     }
-
-    element.classList.add('revealed');
-
-    var row = Math.floor(id / 10);
-    var col = id % 10;
-
-    // Recursively check and reveal neighboring tiles
-    for (var i = row - 1; i <= row + 1; i++) {
-        for (var j = col - 1; j <= col + 1; j++) {
-            var neighborId = i * 10 + j;
-            if (neighborId !== id) {
-                var neighborElement = document.getElementById(neighborId);
-                if (neighborElement) {
-                    floodFill(neighborId);
-                }
-            }
-        }
-    }
-}
+  }
+  
+  
+  
 
 
 // I NEED RECURSIVE FUNCTION TO REVEAL EMPTY TILES/
