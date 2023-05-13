@@ -7,7 +7,8 @@
     <link rel="stylesheet" href="assets/css/style.css"> <!-- this is the general style -->
     <link rel="stylesheet" href="assets/css/game.css"> <!-- this is the style fot rhis page only -->
     <link rel="stylesheet" href="assets/css/footer.css"> <!-- this is the footer style -->
-    <script src="assets/js/gamefield.js"></script>
+    <script src="assets/js/gamefield.js"></script> <!-- this is script for the game behaviour -->
+    <script src="assets/js/timer.js"></script> <!-- script for the timer -->
 </head>
 
 <body>
@@ -37,6 +38,7 @@
             <!-- draw the table with blank fields -->
             <script>
                 createTable();
+                // setTimeout(timerStartStop, 5000);
             </script>
         </div>
 
@@ -44,7 +46,7 @@
             <h2>Options</h2>
 
             <div class="mytime" id="left-mytime">
-                Your time: <span id="yourtime">00:00:00</span>
+                Your time: <span id="timer">00:00:0</span>
             </div>
 
             <div class="besttime" id="right-besttime">

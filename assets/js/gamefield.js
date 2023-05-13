@@ -30,6 +30,7 @@ function generateBombLocations() {
 // ===================================================================================================================
 
 function revealTile(event, id) {
+    timerStart();
     document.getElementById(id).removeAttribute('oncontextmenu');
     event.preventDefault();
     var element = document.getElementById(id);
@@ -37,6 +38,7 @@ function revealTile(event, id) {
 
 
     if (element.classList.contains('bomb')) {
+        timerStop();   //once we hit a bomb, the timer is stopped/ function is located in other script ( timer.js )
         console.log('Clicked tile has a bomb!');
         console.log('You DIED!');
         image.src = 'assets/img/SVGs/bomb.svg'
@@ -155,7 +157,6 @@ function checkMines(id) {
         if (document.getElementById(idAsInt - 1).classList.contains("bomb"))
             bombCount++;
     }
-
     printBombNumberImg(bombCount, idAsInt);
 }
 
@@ -165,11 +166,13 @@ function printBombNumberImg(bombCount, tileID) {
     var element = document.getElementById(tileID);
     var image = element.querySelector('img');
     image.src = 'assets/img/SVGs/' + bombCount + 's.svg';
-    document.addEventListener("contextmenu", function (event) {
+    element.addEventListener("contextmenu", function (event) {
         event.preventDefault(); // Prevent the default right-click context menu
     });
-    if (bombCount == 0)
+    if (bombCount == 0) {
         floodFillTile(tileID);
+        console.log("we fill");
+    }
 }
 
 // ===================================================================================================================
@@ -197,31 +200,54 @@ function flagTile(event, id) {
 
 function floodFillTile(id) {
     const element = document.getElementById(id);
-    
+
     if (!element || element.classList.contains('bomb') || element.classList.contains('revealed')) {
         return; // Stop recursion if the tile is a bomb, already revealed, or not found
     }
-    
+
     element.classList.add('revealed'); // Mark the tile as revealed
-    
+
     const row = Math.floor(id / 10); // Extract row number from id
     const col = id % 10; // Extract column number from id
-    
+
     // Define the eight possible directions of adjacent tiles
     const directions = [
         { row: -1, col: -1 }, { row: -1, col: 0 }, { row: -1, col: 1 },
         { row: 0, col: -1 }, /* Current tile */ { row: 0, col: 1 },
         { row: 1, col: -1 }, { row: 1, col: 0 }, { row: 1, col: 1 }
     ];
-    
-    for (const direction of directions) {
+
+    let bombCount = 0;
+
+    for (let i = 0; i < directions.length; i++) {
+        const direction = directions[i];
         const newRow = row + direction.row;
         const newCol = col + direction.col;
         const newId = newRow * 10 + newCol;
-        
-        floodFillTile(newId); // Recursively call floodFillTile on adjacent tiles
+
+        const adjacentTile = document.getElementById(newId);
+        if (adjacentTile && adjacentTile.classList.contains('bomb')) {
+            bombCount++;
+        }
     }
+
+    if (bombCount === 0) {
+        for (const direction of directions) {
+            const newRow = row + direction.row;
+            const newCol = col + direction.col;
+            const newId = newRow * 10 + newCol;
+
+            floodFillTile(newId); // Recursively call floodFillTile on neighboring tiles
+        }
+    }
+
+    // Update the image source
+    const image = element.querySelector('img');
+    image.src = 'assets/img/SVGs/' + bombCount + 's.svg';
 }
+
+
+
 
 
 
