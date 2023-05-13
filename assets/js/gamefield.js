@@ -31,10 +31,10 @@ function generateBombLocations() {
 
 function revealTile(event, id) {
     document.getElementById(id).removeAttribute('oncontextmenu');
-    event.preventDefault();3
+    event.preventDefault(); 3
     var element = document.getElementById(id);
     var image = element.querySelector('img');
-    
+
     image.src = 'assets/img/SVGs/1s.svg';
 
     checkMines(id);
@@ -44,12 +44,17 @@ function revealTile(event, id) {
         console.log('You DIED!');
         image.src = 'assets/img/SVGs/bomb.svg'
         for (var ai = 1; ai <= 9; ai++)
-        for (var aj = 1; aj <= 9; aj++) {
-            var IDD = parseInt(ai * 10 + aj);
-            document.getElementById(IDD).removeAttribute("onclick");
-            document.getElementById(IDD).removeAttribute('oncontextmenu');
+            for (var aj = 1; aj <= 9; aj++) {
+                var IDD = parseInt(ai * 10 + aj);
+                document.getElementById(IDD).removeAttribute("onclick");
+                document.getElementById(IDD).removeAttribute('oncontextmenu');
             }
     }
+
+    if (!element.classList.contains('bomb')) {
+        floodFill(id);
+    }
+
 }
 
 // ===================================================================================================================
@@ -156,6 +161,8 @@ function printBombNumberImg(bombCount, tileID) {
     var element = document.getElementById(tileID);
     var image = element.querySelector('img');
     image.src = 'assets/img/SVGs/' + bombCount + 's.svg';
+    if (bombCount == 0)
+        floodFillTile(tileID);
 }
 
 // ===================================================================================================================
@@ -179,8 +186,36 @@ function flagTile(event, id) {
 
 // ===================================================================================================================
 
-function revealNeighboringTiles(ro2, col) {
+function floodFillTile(id) {
+    var element = document.getElementById(id);
+    var image = element.querySelector('img');
 
+    if (element.classList.contains('flagged')) {
+        return; // Skip if the tile is flagged
+    }
+
+    if (element.classList.contains('revealed')) {
+        return; // Skip if the tile is already revealed
+    }
+
+    element.classList.add('revealed');
+
+    var row = Math.floor(id / 10);
+    var col = id % 10;
+
+    // Recursively check and reveal neighboring tiles
+    for (var i = row - 1; i <= row + 1; i++) {
+        for (var j = col - 1; j <= col + 1; j++) {
+            var neighborId = i * 10 + j;
+            if (neighborId !== id) {
+                var neighborElement = document.getElementById(neighborId);
+                if (neighborElement) {
+                    floodFill(neighborId);
+                }
+            }
+        }
+    }
 }
+
 
 // I NEED RECURSIVE FUNCTION TO REVEAL EMPTY TILES/
