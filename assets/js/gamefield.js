@@ -31,11 +31,10 @@ function generateBombLocations() {
 
 function revealTile(event, id) {
     document.getElementById(id).removeAttribute('oncontextmenu');
-    event.preventDefault(); 3
+    event.preventDefault();
     var element = document.getElementById(id);
     var image = element.querySelector('img');
 
-    // image.src = 'assets/img/SVGs/1s.svg';
 
     if (element.classList.contains('bomb')) {
         console.log('Clicked tile has a bomb!');
@@ -44,8 +43,13 @@ function revealTile(event, id) {
         for (var ai = 1; ai <= 9; ai++)
             for (var aj = 1; aj <= 9; aj++) {
                 var IDD = parseInt(ai * 10 + aj);
+
                 document.getElementById(IDD).removeAttribute("onclick");
                 document.getElementById(IDD).removeAttribute('oncontextmenu');
+                if (document.getElementById(IDD).classList.contains('bomb'))
+                    document.getElementById(IDD).querySelector('img').src = 'assets/img/SVGs/bombFill.svg';
+                if (IDD == id)
+                    image.src = 'assets/img/SVGs/bomb.svg';
             }
         // window.alert("You lost the game. GAME OVER!");
         return;
@@ -53,9 +57,6 @@ function revealTile(event, id) {
 
     checkMines(id);
 
-    if (!element.classList.contains('bomb')) {
-        floodFill(id);
-    }
 
 }
 
@@ -164,6 +165,9 @@ function printBombNumberImg(bombCount, tileID) {
     var element = document.getElementById(tileID);
     var image = element.querySelector('img');
     image.src = 'assets/img/SVGs/' + bombCount + 's.svg';
+    document.addEventListener("contextmenu", function (event) {
+        event.preventDefault(); // Prevent the default right-click context menu
+    });
     if (bombCount == 0)
         floodFillTile(tileID);
 }
@@ -193,34 +197,64 @@ function flagTile(event, id) {
 
 function floodFillTile(id) {
     const element = document.getElementById(id);
-  
+    
     if (!element || element.classList.contains('bomb') || element.classList.contains('revealed')) {
-      return; // Stop recursion if the tile is a bomb, already revealed, or not found
+        return; // Stop recursion if the tile is a bomb, already revealed, or not found
     }
-  
+    
     element.classList.add('revealed'); // Mark the tile as revealed
-  
+    
     const row = Math.floor(id / 10); // Extract row number from id
     const col = id % 10; // Extract column number from id
-  
+    
     // Define the eight possible directions of adjacent tiles
     const directions = [
-      { row: -1, col: -1 }, { row: -1, col: 0 }, { row: -1, col: 1 },
-      { row: 0, col: -1 }, /* Current tile */ { row: 0, col: 1 },
-      { row: 1, col: -1 }, { row: 1, col: 0 }, { row: 1, col: 1 }
+        { row: -1, col: -1 }, { row: -1, col: 0 }, { row: -1, col: 1 },
+        { row: 0, col: -1 }, /* Current tile */ { row: 0, col: 1 },
+        { row: 1, col: -1 }, { row: 1, col: 0 }, { row: 1, col: 1 }
     ];
-  
+    
     for (const direction of directions) {
-      const newRow = row + direction.row;
-      const newCol = col + direction.col;
-      const newId = newRow * 10 + newCol;
-  
-      floodFillTile(newId); // Recursively call floodFillTile on adjacent tiles
+        const newRow = row + direction.row;
+        const newCol = col + direction.col;
+        const newId = newRow * 10 + newCol;
+        
+        floodFillTile(newId); // Recursively call floodFillTile on adjacent tiles
     }
-  }
-  
-  
-  
+}
+
+
+
 
 
 // I NEED RECURSIVE FUNCTION TO REVEAL EMPTY TILES/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// ===================================================================================================================
+// place reserved for the timer
