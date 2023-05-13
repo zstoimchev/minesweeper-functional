@@ -103,5 +103,6 @@
             </table> -->
 
 
+document.write('<td id="' + stringID + '" onclick="revealTile(' + stringID + ')" oncontextmenu="handleRightClick(event)" class="' + isBomb + '"><a href="#"><img src="assets/img/SVGs/unoppened.svg" alt="one"></a></td>');
 
 
