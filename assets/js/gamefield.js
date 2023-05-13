@@ -50,7 +50,6 @@ function revealTile(event, id) {
             document.getElementById(IDD).removeAttribute('oncontextmenu');
             }
     }
-
 }
 
 // ===================================================================================================================
