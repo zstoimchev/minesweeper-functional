@@ -7,7 +7,7 @@ function createTable() {
         for (let j = 1; j <= 9; j++) {
             let stringID = parseInt(i * 10 + j);
             let isBomb = bombLocations.includes(stringID) ? 'bomb' : '';
-            document.write('<td id="' + stringID + '" onclick="revealTile(' + stringID + ')" oncontextmenu="flagTile(event, ' + stringID + ')" class="' + isBomb + '"><a href="#"><img src="assets/img/SVGs/unoppened.svg" alt="one"></a></td>');
+            document.write('<td id="' + stringID + '" onclick="revealTile(event, ' + stringID + ')" oncontextmenu="flagTile(event, ' + stringID + ')" class="' + isBomb + '"><a href="#"><img src="assets/img/SVGs/unoppened.svg" alt="one"></a></td>');
         }
         document.write("</tr>");
     }
@@ -29,10 +29,12 @@ function generateBombLocations() {
 
 // ===================================================================================================================
 
-function revealTile(id) {
+function revealTile(event, id) {
+    document.getElementById(id).removeAttribute('oncontextmenu');
+    event.preventDefault();3
     var element = document.getElementById(id);
     var image = element.querySelector('img');
-
+    
     image.src = 'assets/img/SVGs/1s.svg';
 
     checkMines(id);
@@ -42,9 +44,10 @@ function revealTile(id) {
         console.log('You DIED!');
         image.src = 'assets/img/SVGs/bomb.svg'
         for (var ai = 1; ai <= 9; ai++)
-            for (var aj = 1; aj <= 9; aj++) {
-                var IDD = parseInt(ai * 10 + aj);
-                document.getElementById(IDD).removeAttribute("onclick");
+        for (var aj = 1; aj <= 9; aj++) {
+            var IDD = parseInt(ai * 10 + aj);
+            document.getElementById(IDD).removeAttribute("onclick");
+            document.getElementById(IDD).removeAttribute('oncontextmenu');
             }
     }
 
@@ -161,19 +164,24 @@ function printBombNumberImg(bombCount, tileID) {
 // this was idea from chatGPT
 function flagTile(event, id) {
     event.preventDefault(); // Prevent the default context menu from appearing
-    
-    var element = event.target;
-    // Add your custom right-click logic here
-    console.log("Right-clicked on element with ID: " + element.id);
-    
-    // ...
+
     var element = document.getElementById(id);
     var image = element.querySelector('img');
-    
-    image.src = 'assets/img/SVGs/flag.svg';
+
+    if (element.classList.contains("flagged")) {
+        element.classList.remove("flagged");
+        image.src = 'assets/img/SVGs/unoppened.svg'
+    }
+    else {
+        element.classList.add('flagged');
+        image.src = 'assets/img/SVGs/flag.svg';
+    }
 }
 
 // ===================================================================================================================
 
+function revealNeighboringTiles(ro2, col) {
+
+}
 
 // I NEED RECURSIVE FUNCTION TO REVEAL EMPTY TILES/
