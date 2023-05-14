@@ -186,6 +186,12 @@ function flagTile(event, id) {
 
     if (element.classList.contains("flagged")) {
         element.classList.remove("flagged");
+        element.classList.add("questionable");
+        image.src = 'assets/img/SVGs/questionMark.svg'
+        document.getElementById(id).setAttribute('onclick', 'revealTile(event, ' + id + ')');
+    }
+    else if (element.classList.contains("questionable")) {
+        element.classList.remove("questionable");
         document.getElementById(id).setAttribute('onclick', 'revealTile(event, ' + id + ')');
         image.src = 'assets/img/SVGs/unoppened.svg'
     }
@@ -244,6 +250,11 @@ function floodFillTile(id) {
     // Update the image source
     const image = element.querySelector('img');
     image.src = 'assets/img/SVGs/' + bombCount + 's.svg';
+    element.removeAttribute("onclick");
+    element.removeAttribute('oncontextmenu');
+    element.addEventListener("contextmenu", function (event) {
+        event.preventDefault(); // Prevent the default right-click context menu
+    });
 }
 
 
