@@ -171,8 +171,29 @@ nav .dropdown {
     h1 {
         font-size: 290%;
     }
-
+    
     nav {
         margin-top: 5%;
+    }
+}
+
+@media screen and (max-width: 1920px) {
+    
+    .container-item,
+    .dropdown {
+        justify-content: center;
+        display: grid;
+        /* padding: 25px; */
+        /* margin-top: 15px; */
+        font-size: 1.5em;
+    }
+    
+    h1 {
+        font-size: 290%;
+        margin-bottom: 0;
+    }
+    
+    nav {
+        margin-top: 1%;
     }
 }
