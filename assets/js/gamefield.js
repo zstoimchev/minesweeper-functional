@@ -1,12 +1,15 @@
 function createTable() {
     document.write("<table>");
-    let bombLocations = generateBombLocations();
+    // let bombLocations = generateBombLocations(11);
+    var queryParams = new URLSearchParams(window.location.search);
+    var bombLocations = queryParams.get('bombLocations');
 
     for (let i = 1; i <= 9; i++) {
         document.write("<tr>");
         for (let j = 1; j <= 9; j++) {
-            let stringID = parseInt(i * 10 + j);
+            let stringID = i * 10 + j;
             let isBomb = bombLocations.includes(stringID) ? 'bomb' : '';
+            // let isBomb = "no";
             document.write('<td id="' + stringID + '" onclick="revealTile(event, ' + stringID + ')" oncontextmenu="flagTile(event, ' + stringID + ')" class="' + isBomb + '"><a href="#"><img src="assets/img/SVGs/unoppened.svg" alt="one"></a></td>');
         }
         document.write("</tr>");
@@ -16,21 +19,62 @@ function createTable() {
 
 // ===================================================================================================================
 
-function generateBombLocations() {
+// easy:       11 mines?
+// medium:     18 mines?
+// hard:       27 mines?
+
+function generateBombLocations(diff) {
     let bombLocations = [];
-    while (bombLocations.length < 10) {
-        let randomLocation = Math.floor(Math.random() * 81) + 1; // Generate random number between 1 and 81
+    locationNumber = 0;
+    while (locationNumber < diff) {
+        let randomLocation = Math.floor(Math.random() * 88) + 11; // Generate random number between 11 and 99
+        if (randomLocation % 10 == 0) {
+            continue;
+        }
         if (!bombLocations.includes(randomLocation)) {
             bombLocations.push(randomLocation);
+            locationNumber = locationNumber + 1;
         }
     }
+    console.log(bombLocations);
     return bombLocations;
+}
+
+// ===================================================================================================================
+
+function checkGameOver() {
+    var flaggedTilesCount = 0;
+    for (i = 1; i <= 9; i++) {
+        for (j = 1; j <= 9; j++) {
+            let id = i * 10 + j;
+            if (document.getElementById(id).classList.contains("flagged") || document.getElementById(id).classList.contains("questionable")) {
+                flaggedTilesCount++;
+            }
+        }
+    }
+    return flaggedTilesCount;
+}
+
+// ===================================================================================================================
+
+function checkGameOverWithOppenedTiles() {
+    var oppenedTilesCount = 0;
+    for (i = 1; i <= 9; i++) {
+        for (j = 1; j <= 9; j++) {
+            let id = i * 10 + j;
+            if (document.getElementById(id).classList.contains("oppenedTile")) {
+                oppenedTilesCount++;
+            }
+        }
+    }
+    return flaggedTilesCount;
 }
 
 // ===================================================================================================================
 
 function revealTile(event, id) {
     timerStart();
+
     document.getElementById(id).removeAttribute('oncontextmenu');
     event.preventDefault();
     var element = document.getElementById(id);
@@ -169,6 +213,7 @@ function printBombNumberImg(bombCount, tileID) {
     element.addEventListener("contextmenu", function (event) {
         event.preventDefault(); // Prevent the default right-click context menu
     });
+    element.classList.add("oppenedTile");
     if (bombCount == 0) {
         floodFillTile(tileID);
         console.log("we fill");
@@ -200,6 +245,24 @@ function flagTile(event, id) {
         document.getElementById(id).removeAttribute("onclick");
         image.src = 'assets/img/SVGs/flag.svg';
     }
+
+
+    var queryParams = new URLSearchParams(window.location.search);
+    var bombLocations = queryParams.get('bombLocations');
+    bombLocations = bombLocations.split(',').map(Number);
+    const flagCount = checkGameOver();
+    if (bombLocations.length == flagCount) {
+        for (var ai = 1; ai <= 9; ai++)
+            for (var aj = 1; aj <= 9; aj++) {
+                var IDD = parseInt(ai * 10 + aj);
+                document.getElementById(IDD).removeAttribute("onclick");
+                document.getElementById(IDD).removeAttribute('oncontextmenu');
+            }
+    }
+    console.log(bombLocations);
+
+
+
 }
 
 // ===================================================================================================================
@@ -255,43 +318,20 @@ function floodFillTile(id) {
     element.addEventListener("contextmenu", function (event) {
         event.preventDefault(); // Prevent the default right-click context menu
     });
+    element.classList.add("oppenedTile");
 }
 
 
 
-
-
-
-
-
-// I NEED RECURSIVE FUNCTION TO REVEAL EMPTY TILES/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // ===================================================================================================================
-// place reserved for the timer
+
+
+function generateDifficulty(difficulty) {
+    const bombLocations = generateBombLocations(difficulty);
+    window.location.href = 'play-game.html?bombLocations=' + bombLocations.map(Number).join(',');
+}
+
+
+function writesth() {
+    console.log("weeeeeeeeeeee");
+}
